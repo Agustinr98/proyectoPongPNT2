@@ -6,6 +6,6 @@ Incluye mejoras visuales, sonidos, y dinámicas innovadoras que lo hacen más de
 ##Integrantes del equipo:
 - Acosta, Luis Alberto
 - Grün, Florencia Magalí
-- Ruíz, Agustín
+- Ruiz, Agustín
 - Sanchez, Matías Leonel
 
