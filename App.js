@@ -1,9 +1,10 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import LoginForm from "./src/components/LoginForm";
+import LoginForm from "./src/screens/LoginForm";
+import GameScreen from "./src/screens/GameScreen";
 
 export default function App() {
-  return <LoginForm />;
+  return <GameScreen />;
 }
 
 const styles = StyleSheet.create({
