@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, PanResponder, Text } from "react-native";
+import { View, StyleSheet, Dimensions, PanResponder, Text, Image, ImageBackground } from "react-native";
+
 
 //********************************************************************************************
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
@@ -16,9 +17,9 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
     "BALL_SIZE" DEFINE EL DIAMETRO DE LA PELOTA EN 20px (ES UN CUADRADO QUE LUEGO SE REDONDEA)
     "BALL_SPEED" DEFINE EL VALOR INICIAL DE VELOCIDAD (MAYOR VALOR MAS VELOCIDAD)
 */
-const PADDLE_WIDTH = 100;
+const PADDLE_WIDTH = 500;
 const PADDLE_HEIGHT = 20;
-const BALL_SIZE = 30;
+const BALL_SIZE = 125;
 const BALL_SPEED = 5;
 //********************************************************************************************
 
@@ -59,6 +60,7 @@ export default function GameScreen() {
     "setScore": SE USARA PARA AUMENTAR EL VALOR CUANDO LA PELOTA TOQUE LA PALETA
 */
   const [score, setScore] = useState(0);
+  
 
 /*
     "const [gameOver, setGameOver] = useState(false)": BOOLEANO PARA SABER SI EL JUGADOR PERDIO
@@ -219,20 +221,24 @@ export default function GameScreen() {
   }, [gameOver]);
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
-      <Text style={styles.score}>Puntos: {score}</Text>
+    <ImageBackground 
+        source={require("../../assets/canchaTennis.png")}
+        style={styles.container} 
+        resizeMode="stretch"
+        {...panResponder.panHandlers}
+    >
+      <Text style={styles.score}>{score}</Text>
       {gameOver && <Text style={styles.gameOver}>¡GAME OVER!</Text>}
 
       {/* ESTILOS PELOTA */}
-      <View
+      <Image
+        source={require("../../assets/tenisBall.png")}
         style={{
-          position: "absolute",
           width: BALL_SIZE,
           height: BALL_SIZE,
-          backgroundColor: "red",
-          borderRadius: BALL_SIZE / 2,
-          top: ball.y,
+          position: "absolute",
           left: ball.x,
+          top: ball.y,
         }}
       />
 
@@ -247,7 +253,7 @@ export default function GameScreen() {
           left: paddleX,
         }}
       />
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -257,10 +263,11 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   score: {
-    color: "white",
-    fontSize: 24,
+    color: "black",
+    fontSize: 100,
     textAlign: "center",
-    marginTop: 40,
+    marginTop: 250,
+    opacity: 0.4
   },
   gameOver: {
     color: "red",
@@ -268,4 +275,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
   },
+  background: {
+  flex: 1,
+  resizeMode: 'cover',
+  justifyContent: 'center',
+  alignItems: 'center',
+}
 });
