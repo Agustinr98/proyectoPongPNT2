@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, PanResponder, Text, Image, ImageBackground } from "react-native";
-
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  PanResponder,
+  Text,
+  Image,
+  ImageBackground,
+} from "react-native";
 
 //********************************************************************************************
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
@@ -21,15 +28,15 @@ const PADDLE_WIDTH = 500;
 const PADDLE_HEIGHT = 20;
 const BALL_SIZE = 125;
 const BALL_SPEED = 5;
+const BASE_SPEED = 5;
 //********************************************************************************************
-
 
 //********************************************************************************************
 // ACA SE DEFINE Y EXPORTA EL COMPONENTE PRINCIPAL DE LA PANTALLA DEL JUEGO
 //********************************************************************************************
 export default function GameScreen() {
-//---------------------------------------------------------------------------------------------
-/*
+  //---------------------------------------------------------------------------------------------
+  /*
     "const [paddleX, setPaddleX] = useState((SCREEN_WIDTH - PADDLE_WIDTH) / 2)""
     "(SCREEN_WIDTH - PADDLE_WIDTH) / 2": ESTO SETEA LA POSICION INICIAL EN HORIZONTAL
     DE LA PALETA; EL "/2" CALCULA EL CENTRO DE LA PANTALLA
@@ -37,7 +44,9 @@ export default function GameScreen() {
 */
   const [paddleX, setPaddleX] = useState((SCREEN_WIDTH - PADDLE_WIDTH) / 2);
 
-/*
+  const [ballSize, setBallSize] = useState(BALL_SIZE);
+
+  /*
     "const [ball, setBall] = useState({ ... })": ESTE USESTATE DEFINE POSICION Y DIRECCION DE LA PELOTA
     "x: SCREEN_WIDTH / 2 - BALL_SIZE / 2": DEFINE POSICION HORIZONTAL INICIAL EN CENTRO DE LA PANTALLA
     "y: SCREEN_HEIGHT / 2": DEFINE POSICION VERTICAL EN CENTRO DE LA PANTALLA
@@ -55,30 +64,29 @@ export default function GameScreen() {
     dy: -BALL_SPEED,
   });
 
-/*
+  /*
     "const [score, setScore] = useState(0)": CONTADOR DE PUNTOS, COMIENZA EN CERO
     "setScore": SE USARA PARA AUMENTAR EL VALOR CUANDO LA PELOTA TOQUE LA PALETA
 */
   const [score, setScore] = useState(0);
-  
 
-/*
+  /*
     "const [gameOver, setGameOver] = useState(false)": BOOLEANO PARA SABER SI EL JUGADOR PERDIO
     CUANDO LA PELOTA TOCA EL FONDO DE LA PANTALLA; SI ES TRUE EL JUEGO SE DETIENE    
 */
   const [gameOver, setGameOver] = useState(false);
 
-/*
+  /*
     "const ballRef = useRef(ball)": SE GUARDA LA ULTIMA POSICION DE LA PELOTA
 */
   const ballRef = useRef(ball);
 
-/*
+  /*
     "const paddleRef = useRef(paddleX)": SE GUARDA LA ULTIMA POSICION DE LA PALETA
 */
   const paddleRef = useRef(paddleX);
 
-/*
+  /*
     "useEffect(() => { ... }, [ball])": SE EJECUTA CUANDO CAMBIA EL ESTADO DE LA PELOTA (ball)
     "ballRef.current = ball": ACTUALIZA EL "ref" CON EL NUEVO VALOR DEL ESTADO PELOTA (ball)
 
@@ -89,7 +97,7 @@ export default function GameScreen() {
     ballRef.current = ball;
   }, [ball]);
 
-/*
+  /*
     "useEffect(() => { ... }, [paddleX])": SE EJECUTA CUANDO CAMBIA EL ESTADO DE LA PALETA (paddleX)
     "paddleRef.current = paddleX": ACTUALIZA EL "ref" CON EL NUEVO VALOR DEL ESTADO PALETA (paddleX)
 
@@ -100,11 +108,27 @@ export default function GameScreen() {
     paddleRef.current = paddleX;
   }, [paddleX]);
 
-//********************************************************************************************
-// ACA ESTA LA LOGICA PARA MOVER LA PALETA CON EL DEDO
-//********************************************************************************************
+  /* >>>>>>>>>>>>>>>>>>EXPLICAR ESTE USEEFECT DE VELOCIDAD<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+  useEffect(() => {
+    const speedMultiplier = 1 + Math.floor(score / 5) * 0.5; // AUMENTA 50% CADA 5 GOLPES
 
-/*
+    setBall((prev) => {
+      const newDx = (prev.dx > 0 ? 1 : -1) * BASE_SPEED * speedMultiplier;
+      const newDy = (prev.dy > 0 ? 1 : -1) * BASE_SPEED * speedMultiplier;
+
+      return {
+        ...prev,
+        dx: newDx,
+        dy: newDy,
+      };
+    });
+  }, [score]);
+
+  //********************************************************************************************
+  // ACA ESTA LA LOGICA PARA MOVER LA PALETA CON EL DEDO
+  //********************************************************************************************
+
+  /*
     "panResponder": ES UNA HERRAMIENTA DE REACT NATIVE PARA MANEJAR GESTOS TACTILES
     "PanResponder.create": CREA UNA LISTA DE GESTOS QUE DETECTA SI EL JUGADOR TOCO LA PANTALLA 
     "onStartShouldSetPanResponder: () => true": DEVUELVE SIEMPRE "true" PARA PODER REACCIONAR A CUALQUIER TOQUE
@@ -131,18 +155,18 @@ export default function GameScreen() {
     })
   ).current;
 
-//********************************************************************************************
-// ACA ESTA LA LOGICA DEL MOVIMIENTO DE LA PELOTA (REBOTES, COLISION CON PALETA Y FIN DEL JUEGO)
-//********************************************************************************************
+  //********************************************************************************************
+  // ACA ESTA LA LOGICA DEL MOVIMIENTO DE LA PELOTA (REBOTES, COLISION CON PALETA Y FIN DEL JUEGO)
+  //********************************************************************************************
 
-/*
+  /*
   "useEffect(() => { ... }, [gameOver])": SE ACTIVA AL COMENZAR EL JUEGO O CUANDO CAMBIA EL VALOR DE "gameOver"
   "if (gameOver) return": NO EJECUTA NADA, SIGNIFICA QUE SE PERDIO Y LA PELOTA NO SE MUEVE MAS
 */
   useEffect(() => {
     if (gameOver) return;
 
-/*
+    /*
   "const interval = setInterval(() => {...} , 10)": SIMULA LOS FPS DEL JUEGO, A MAYOR VALOR MENOS FPS (SE VE MAS LENTO)
   "let newX = prev.x + prev.dx;
    let newY = prev.y + prev.dy;
@@ -162,7 +186,7 @@ export default function GameScreen() {
             "if (newX <= 0 || newX + BALL_SIZE >= SCREEN_WIDTH) {...}": AL TOCAR LOS BORDES LATERALES INVIERTE LA DIRECCION
             HACIA DONDE SE MUEVE LA PELOTA
         */
-        if (newX <= 0 || newX + BALL_SIZE >= SCREEN_WIDTH) {
+        if (newX <= 0 || newX + ballSize >= SCREEN_WIDTH) {
           newDx = -newDx;
         }
 
@@ -184,20 +208,38 @@ export default function GameScreen() {
             REBOTAR LA PELOTA Y "setScore((s) => s + 1)" SUMA UN PUNTO
         */
         const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT;
-        const isBallAbovePaddle = newY + BALL_SIZE >= paddleTop;
+        const isBallAbovePaddle = newY + ballSize  >= paddleTop;
         const isBallWithinPaddle =
-          newX + BALL_SIZE >= paddleRef.current &&
+          newX + ballSize  >= paddleRef.current &&
           newX <= paddleRef.current + PADDLE_WIDTH;
+
+          /* >>>>>>>>>>>>>>>EXPLICAR ESTA PARTE<<<<<<<<<<<<<<<<<<<<<<<<< */
 
         if (isBallAbovePaddle && isBallWithinPaddle && newDy > 0) {
           newDy = -newDy;
-          setScore((s) => s + 1);
+
+          setScore((s) => {
+            const newScore = s + 1;
+
+  // Cada 5 puntos, aumentar la velocidad y reducir tamaño
+  if (newScore % 1 === 0) {
+    const speedMultiplier = 1.5;
+
+    newDx *= speedMultiplier;
+    newDy *= speedMultiplier;
+
+    // Reducir el tamaño de la pelota hasta un mínimo de 50px
+    setBallSize((prevSize) => Math.max(50, prevSize - 15));
+  }
+
+  return newScore;
+});
         }
 
         /* 
             "if (newY + BALL_SIZE >= SCREEN_HEIGHT) {...}": SI LA PELOTA TOCA EL FONDO SIN TOCAR LA PALETA ENTONCES SE PIERDE
         */
-        if (newY + BALL_SIZE >= SCREEN_HEIGHT) {
+        if (newY + ballSize >= SCREEN_HEIGHT) {
           setGameOver(true);
         }
 
@@ -221,25 +263,25 @@ export default function GameScreen() {
   }, [gameOver]);
 
   return (
-    <ImageBackground 
-        source={require("../../assets/canchaTennis.png")}
-        style={styles.container} 
-        resizeMode="stretch"
-        {...panResponder.panHandlers}
+    <ImageBackground
+      source={require("../../assets/canchaTennis.png")}
+      style={styles.container}
+      resizeMode="stretch"
+      {...panResponder.panHandlers}
     >
       <Text style={styles.score}>{score}</Text>
       {gameOver && <Text style={styles.gameOver}>¡GAME OVER!</Text>}
 
       {/* ESTILOS PELOTA */}
       <Image
-        source={require("../../assets/tenisBall.png")}
-        style={{
-          width: BALL_SIZE,
-          height: BALL_SIZE,
-          position: "absolute",
-          left: ball.x,
-          top: ball.y,
-        }}
+       source={require("../../assets/tenisBall.png")}
+  style={{
+    width: ballSize,
+    height: ballSize,
+    position: "absolute",
+    left: ball.x,
+    top: ball.y,
+  }}
       />
 
       {/* ESTILOS PALETA */}
@@ -267,7 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 100,
     textAlign: "center",
     marginTop: 250,
-    opacity: 0.4
+    opacity: 0.4,
   },
   gameOver: {
     color: "red",
@@ -276,9 +318,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   background: {
-  flex: 1,
-  resizeMode: 'cover',
-  justifyContent: 'center',
-  alignItems: 'center',
-}
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
