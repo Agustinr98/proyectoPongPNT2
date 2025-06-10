@@ -7,7 +7,9 @@ import {
   Text,
   Image,
   ImageBackground,
+  TouchableOpacity 
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 //********************************************************************************************
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
@@ -24,11 +26,12 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
     "BALL_SIZE" DEFINE EL DIAMETRO DE LA PELOTA EN 20px (ES UN CUADRADO QUE LUEGO SE REDONDEA)
     "BALL_SPEED" DEFINE EL VALOR INICIAL DE VELOCIDAD (MAYOR VALOR MAS VELOCIDAD)
 */
-const PADDLE_WIDTH = 500;
+const PADDLE_WIDTH = 50;
 const PADDLE_HEIGHT = 20;
-const BALL_SIZE = 125;
+const BALL_SIZE = 80;
 const BALL_SPEED = 5;
 const BASE_SPEED = 5;
+
 //********************************************************************************************
 
 //********************************************************************************************
@@ -207,7 +210,7 @@ export default function GameScreen() {
             }": SI "newDy > 0" SIGNIFICA QUE LA PELOTA ESTABA BAJANDO, ENTONCES "newDy = -newDy" HACE
             REBOTAR LA PELOTA Y "setScore((s) => s + 1)" SUMA UN PUNTO
         */
-        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT;
+        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - 110;
         const isBallAbovePaddle = newY + ballSize  >= paddleTop;
         const isBallWithinPaddle =
           newX + ballSize  >= paddleRef.current &&
@@ -229,8 +232,9 @@ export default function GameScreen() {
     newDy *= speedMultiplier;
 
     // Reducir el tamaño de la pelota hasta un mínimo de 50px
-    setBallSize((prevSize) => Math.max(50, prevSize - 15));
+   /* setBallSize((prevSize) => Math.max(50, prevSize - 15));*/
   }
+
 
   return newScore;
 });
@@ -262,7 +266,22 @@ export default function GameScreen() {
     return () => clearInterval(interval);
   }, [gameOver]);
 
+  const resetGame = () => {
+  setBall({
+    x: SCREEN_WIDTH / 2 - BALL_SIZE / 2,
+    y: SCREEN_HEIGHT / 2,
+    dx: BALL_SPEED,
+    dy: -BALL_SPEED,
+  });
+  setPaddleX((SCREEN_WIDTH - PADDLE_WIDTH) / 2);
+  setScore(0);
+  setGameOver(false);
+  setBallSize(BALL_SIZE);
+};
+
+
   return (
+  <SafeAreaView style={{ flex: 1 }} backgroundColor= "gre">
     <ImageBackground
       source={require("../../assets/canchaTennis.png")}
       style={styles.container}
@@ -270,33 +289,36 @@ export default function GameScreen() {
       {...panResponder.panHandlers}
     >
       <Text style={styles.score}>{score}</Text>
-      {gameOver && <Text style={styles.gameOver}>¡GAME OVER!</Text>}
+      {gameOver && (
+  <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
+    <Text style={styles.restartText}>Reiniciar</Text>
+  </TouchableOpacity>
+)}
 
-      {/* ESTILOS PELOTA */}
       <Image
-       source={require("../../assets/tenisBall.png")}
-  style={{
-    width: ballSize,
-    height: ballSize,
-    position: "absolute",
-    left: ball.x,
-    top: ball.y,
-  }}
+        source={require("../../assets/tenisBall.png")}
+        style={{
+          width: ballSize,
+          height: ballSize,
+          position: "absolute",
+          left: ball.x,
+          top: ball.y,
+        }}
       />
 
-      {/* ESTILOS PALETA */}
       <View
         style={{
           position: "absolute",
           width: PADDLE_WIDTH,
           height: PADDLE_HEIGHT,
           backgroundColor: "blue",
-          bottom: 0,
+          bottom: 35,
           left: paddleX,
         }}
       />
     </ImageBackground>
-  );
+  </SafeAreaView>
+);
 }
 
 const styles = StyleSheet.create({
@@ -323,4 +345,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  restartButton: {
+  backgroundColor: "#FF5252",
+  paddingVertical: 12,
+  paddingHorizontal: 30,
+  borderRadius: 25,
+  alignSelf: "center",
+  marginTop: 20,
+},
+
+restartText: {
+  color: "white",
+  fontSize: 20,
+  fontWeight: "bold",
+},
 });
