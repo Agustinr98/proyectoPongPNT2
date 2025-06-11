@@ -26,7 +26,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
     "BALL_SIZE" DEFINE EL DIAMETRO DE LA PELOTA EN 20px (ES UN CUADRADO QUE LUEGO SE REDONDEA)
     "BALL_SPEED" DEFINE EL VALOR INICIAL DE VELOCIDAD (MAYOR VALOR MAS VELOCIDAD)
 */
-const PADDLE_WIDTH = 200;
+const PADDLE_WIDTH = 150;
 const PADDLE_HEIGHT = 80;
 const BALL_SIZE = 75;
 const BALL_SPEED = 5;
@@ -325,6 +325,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
+    
   },
   score: {
     color: "black",
