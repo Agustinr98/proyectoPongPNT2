@@ -10,12 +10,13 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-   <NavigationContainer>
+   /* <NavigationContainer>
       <Stack.Navigator initialRouteName="Inicio">
         <Stack.Screen name="Inicio" component={HomeScreen} />
         <Stack.Screen name="Ranking" component={RankingScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
-    </NavigationContainer>
+    </NavigationContainer>*/
+    <GameScreen />
   );
 }

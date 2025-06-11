@@ -7,9 +7,9 @@ import {
   Text,
   Image,
   ImageBackground,
-  TouchableOpacity 
+  TouchableOpacity,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 //********************************************************************************************
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
@@ -26,8 +26,8 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
     "BALL_SIZE" DEFINE EL DIAMETRO DE LA PELOTA EN 20px (ES UN CUADRADO QUE LUEGO SE REDONDEA)
     "BALL_SPEED" DEFINE EL VALOR INICIAL DE VELOCIDAD (MAYOR VALOR MAS VELOCIDAD)
 */
-const PADDLE_WIDTH = 50;
-const PADDLE_HEIGHT = 20;
+const PADDLE_WIDTH = 200;
+const PADDLE_HEIGHT = 40;
 const BALL_SIZE = 80;
 const BALL_SPEED = 5;
 const BASE_SPEED = 5;
@@ -210,13 +210,14 @@ export default function GameScreen() {
             }": SI "newDy > 0" SIGNIFICA QUE LA PELOTA ESTABA BAJANDO, ENTONCES "newDy = -newDy" HACE
             REBOTAR LA PELOTA Y "setScore((s) => s + 1)" SUMA UN PUNTO
         */
-        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - 110;
-        const isBallAbovePaddle = newY + ballSize  >= paddleTop;
+        const PADDLE_BOTTOM_OFFSET = 150;
+        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET;
+        const isBallAbovePaddle = newY + ballSize == paddleTop;
         const isBallWithinPaddle =
-          newX + ballSize  >= paddleRef.current &&
+          newX + ballSize >= paddleRef.current &&
           newX <= paddleRef.current + PADDLE_WIDTH;
 
-          /* >>>>>>>>>>>>>>>EXPLICAR ESTA PARTE<<<<<<<<<<<<<<<<<<<<<<<<< */
+        /* >>>>>>>>>>>>>>>EXPLICAR ESTA PARTE<<<<<<<<<<<<<<<<<<<<<<<<< */
 
         if (isBallAbovePaddle && isBallWithinPaddle && newDy > 0) {
           newDy = -newDy;
@@ -224,20 +225,19 @@ export default function GameScreen() {
           setScore((s) => {
             const newScore = s + 1;
 
-  // Cada 5 puntos, aumentar la velocidad y reducir tamaño
-  if (newScore % 1 === 0) {
-    const speedMultiplier = 1.5;
+            // Cada 5 puntos, aumentar la velocidad y reducir tamaño
+            if (newScore % 1 === 0) {
+              const speedMultiplier = 1.5;
 
-    newDx *= speedMultiplier;
-    newDy *= speedMultiplier;
+              newDx *= speedMultiplier;
+              newDy *= speedMultiplier;
 
-    // Reducir el tamaño de la pelota hasta un mínimo de 50px
-   /* setBallSize((prevSize) => Math.max(50, prevSize - 15));*/
-  }
+              // Reducir el tamaño de la pelota hasta un mínimo de 50px
+              /* setBallSize((prevSize) => Math.max(50, prevSize - 15));*/
+            }
 
-
-  return newScore;
-});
+            return newScore;
+          });
         }
 
         /* 
@@ -267,58 +267,58 @@ export default function GameScreen() {
   }, [gameOver]);
 
   const resetGame = () => {
-  setBall({
-    x: SCREEN_WIDTH / 2 - BALL_SIZE / 2,
-    y: SCREEN_HEIGHT / 2,
-    dx: BALL_SPEED,
-    dy: -BALL_SPEED,
-  });
-  setPaddleX((SCREEN_WIDTH - PADDLE_WIDTH) / 2);
-  setScore(0);
-  setGameOver(false);
-  setBallSize(BALL_SIZE);
-};
-
+    setBall({
+      x: SCREEN_WIDTH / 2 - BALL_SIZE / 2,
+      y: SCREEN_HEIGHT / 2,
+      dx: BALL_SPEED,
+      dy: -BALL_SPEED,
+    });
+    setPaddleX((SCREEN_WIDTH - PADDLE_WIDTH) / 2);
+    setScore(0);
+    setGameOver(false);
+    setBallSize(BALL_SIZE);
+  };
 
   return (
-  <SafeAreaView style={{ flex: 1 }} backgroundColor= "gre">
-    <ImageBackground
-      source={require("../../assets/canchaTennis.png")}
-      style={styles.container}
-      resizeMode="stretch"
-      {...panResponder.panHandlers}
-    >
-      <Text style={styles.score}>{score}</Text>
-      {gameOver && (
-  <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
-    <Text style={styles.restartText}>Reiniciar</Text>
-  </TouchableOpacity>
-)}
+    <SafeAreaView style={{ flex: 1 }} backgroundColor="gre">
+      <ImageBackground
+        source={require("../../assets/canchaTennis.png")}
+        style={styles.container}
+        resizeMode="stretch"
+        {...panResponder.panHandlers}
+      >
+        <Text style={styles.score}>{score}</Text>
+        {gameOver && (
+          <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
+            <Text style={styles.restartText}>Reiniciar</Text>
+          </TouchableOpacity>
+        )}
 
-      <Image
-        source={require("../../assets/tenisBall.png")}
-        style={{
-          width: ballSize,
-          height: ballSize,
-          position: "absolute",
-          left: ball.x,
-          top: ball.y,
-        }}
-      />
+        <Image
+          source={require("../../assets/tenisBall.png")}
+          style={{
+            width: ballSize,
+            height: ballSize,
+            position: "absolute",
+            left: ball.x,
+            top: ball.y,
+          }}
+        />
 
-      <View
-        style={{
-          position: "absolute",
-          width: PADDLE_WIDTH,
-          height: PADDLE_HEIGHT,
-          backgroundColor: "blue",
-          bottom: 35,
-          left: paddleX,
-        }}
-      />
-    </ImageBackground>
-  </SafeAreaView>
-);
+        <Image
+          source={require("../../assets/paddle.png")}
+           style={{
+            position: "absolute",
+            width: PADDLE_WIDTH,
+            height: PADDLE_HEIGHT,
+            bottom: 75,
+            left: paddleX,
+          }}
+        />
+
+      </ImageBackground>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -346,17 +346,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   restartButton: {
-  backgroundColor: "#FF5252",
-  paddingVertical: 12,
-  paddingHorizontal: 30,
-  borderRadius: 25,
-  alignSelf: "center",
-  marginTop: 20,
-},
+    backgroundColor: "#FF5252",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    alignSelf: "center",
+    marginTop: 20,
+  },
 
-restartText: {
-  color: "white",
-  fontSize: 20,
-  fontWeight: "bold",
-},
+  restartText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
 });
