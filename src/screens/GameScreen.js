@@ -27,8 +27,8 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
     "BALL_SPEED" DEFINE EL VALOR INICIAL DE VELOCIDAD (MAYOR VALOR MAS VELOCIDAD)
 */
 const PADDLE_WIDTH = 200;
-const PADDLE_HEIGHT = 40;
-const BALL_SIZE = 80;
+const PADDLE_HEIGHT = 80;
+const BALL_SIZE = 75;
 const BALL_SPEED = 5;
 const BASE_SPEED = 5;
 
