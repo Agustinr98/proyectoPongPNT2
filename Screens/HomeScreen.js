@@ -5,13 +5,13 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.canchaButtons}>
-        <TouchableOpacity style={styles.canchaButton}>
+        <TouchableOpacity style={styles.canchaButton} onPress={() => navigation.navigate('Game', { level: 'tenis' })}>
           <Text>Imagen Cancha 1</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.canchaButton}>
+        <TouchableOpacity style={styles.canchaButton} onPress={() => navigation.navigate('Game', { level: 'futbol' })}>
           <Text>Imagen Cancha 2</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.canchaButton}>
+        <TouchableOpacity style={styles.canchaButton} onPress={() => navigation.navigate('Game', { level: 'basquet' })}>
           <Text>Imagen Cancha 3</Text>
         </TouchableOpacity>
       </View>

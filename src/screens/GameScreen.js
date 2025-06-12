@@ -8,8 +8,10 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  StatusBar
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
 //********************************************************************************************
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
@@ -37,7 +39,31 @@ const BASE_SPEED = 5;
 //********************************************************************************************
 // ACA SE DEFINE Y EXPORTA EL COMPONENTE PRINCIPAL DE LA PANTALLA DEL JUEGO
 //********************************************************************************************
-export default function GameScreen() {
+export default function GameScreen({ route }) {
+  const { level } = route.params || { level: "tenis" };
+  const navigation = useNavigation();
+
+  const getBackgroundImage = () => {
+    switch (level) {
+      case "futbol":
+        return require("../../assets/canchaFutbol.png");
+      case "basquet":
+        return require("../../assets/canchaBasquet.png");
+      default:
+        return require("../../assets/canchaTennis.png");
+    }
+  };
+
+  const getBallImage = () => {
+    switch (level) {
+      case "futbol":
+        return require("../../assets/futbolBall.png");
+      case "basquet":
+        return require("../../assets/basquetBall.png");
+      default:
+        return require("../../assets/tenisBall.png");
+    }
+  };
   //---------------------------------------------------------------------------------------------
   /*
     "const [paddleX, setPaddleX] = useState((SCREEN_WIDTH - PADDLE_WIDTH) / 2)""
@@ -280,22 +306,31 @@ export default function GameScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} backgroundColor="gre">
+    <SafeAreaView style={{ flex: 1 }} backgroundColor="grey">
       <ImageBackground
-        source={require("../../assets/canchaTennis.png")}
+        source={getBackgroundImage()}
         style={styles.container}
         resizeMode="stretch"
         {...panResponder.panHandlers}
       >
         <Text style={styles.score}>{score}</Text>
         {gameOver && (
-          <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
-            <Text style={styles.restartText}>Reiniciar</Text>
-          </TouchableOpacity>
-        )}
+  <>
+    <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
+      <Text style={styles.restartText}>Reiniciar</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity
+      style={[styles.restartButton, { backgroundColor: "#2196F3", marginTop: 10 }]}
+      onPress={() => navigation.navigate("Inicio")}
+    >
+      <Text style={styles.restartText}>Volver al Inicio</Text>
+    </TouchableOpacity>
+  </>
+)}
 
         <Image
-          source={require("../../assets/tenisBall.png")}
+          source={getBallImage()}
           style={{
             width: ballSize,
             height: ballSize,
