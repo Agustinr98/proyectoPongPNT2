@@ -114,73 +114,66 @@ export default function GameScreen({ route }) {
 
   // SE EJECUTA AL COMENZAR EL JUEGO O AL PERDER
   useEffect(() => {
-    if (gameOver) return;
+  if (gameOver) return;
 
-    const interval = setInterval(() => {
-      setBall((prev) => {
-        let newX = prev.x + prev.dx;
-        let newY = prev.y + prev.dy;
-        let newDx = prev.dx;
-        let newDy = prev.dy;
+  let animationFrameId;
 
-        // ESTO INVIERTE EL MOVIMIENTO DE LA PELOTA SEGUN EL REBOTE CONTRA LAS PAREDES LATERALES
-        if (newX <= 0 || newX + ballSize >= SCREEN_WIDTH) {
-          newDx = -newDx;
-        }
+  const updateBallPosition = () => {
+    setBall((prev) => {
+      let newX = prev.x + prev.dx;
+      let newY = prev.y + prev.dy;
+      let newDx = prev.dx;
+      let newDy = prev.dy;
 
-        // ESTO DETECTA LA COLISION CONTRA EL TECHO Y LA DEVUELVE HACIA ABAJO
-        if (newY <= 0) {
-          newDy = -newDy;
-        }
+      // Rebote contra las paredes
+      if (newX <= 0 || newX + ballSize >= SCREEN_WIDTH) {
+        newDx = -newDx;
+      }
 
-        // ESTO ES LA COLISION DE LA PELOTA CON LA PALETA
-        const PADDLE_BOTTOM_OFFSET = 150;
-        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET; // POSICION VERTICAL DE COLISION CON LA PALETA
-        const isBallAbovePaddle = newY + ballSize == paddleTop; //INDICA SI LA PELOTA ESTA TOCANDO LA PARTE SUPERIOR DE LA PALETA
-        const isBallWithinPaddle = //INDICA SI LA PELOTA ESTA DENTRO DEL ANCHO DE LA PALETA
-          newX + ballSize >= paddleRef.current &&
-          newX <= paddleRef.current + PADDLE_WIDTH;
+      if (newY <= 0) {
+        newDy = -newDy;
+      }
 
-        /* >>>>>>>>>>>>>>>EXPLICAR ESTA PARTE<<<<<<<<<<<<<<<<<<<<<<<<< */
+      // Colisión con paleta
+      const PADDLE_BOTTOM_OFFSET = 150;
+      const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET;
+      const isBallCollidingVertically =
+        newY + ballSize >= paddleTop &&
+        newY + ballSize <= paddleTop + PADDLE_HEIGHT;
+      const isBallWithinPaddle =
+        newX + ballSize >= paddleRef.current &&
+        newX <= paddleRef.current + PADDLE_WIDTH;
 
-        if (isBallAbovePaddle && isBallWithinPaddle && newDy > 0) {
-          newDy = -newDy;
+      if (isBallCollidingVertically && isBallWithinPaddle && newDy > 0) {
+        newDy = -newDy;
 
-          setScore((s) => {
-            const newScore = s + 1;
+        setScore((s) => {
+          const newScore = s + 1;
+          return newScore;
+        });
+      }
 
-            // Cada 5 puntos, aumentar la velocidad y reducir tamaño
-            if (newScore % 1 === 0) {
-              const speedMultiplier = 1.5;
+      // Pérdida
+      if (newY + ballSize >= SCREEN_HEIGHT) {
+        setGameOver(true);
+      }
 
-              newDx *= speedMultiplier;
-              newDy *= speedMultiplier;
+      return {
+        ...prev,
+        x: newX,
+        y: newY,
+        dx: newDx,
+        dy: newDy,
+      };
+    });
 
-              // Reducir el tamaño de la pelota hasta un mínimo de 50px
-              /* setBallSize((prevSize) => Math.max(50, prevSize - 15));*/
-            }
+    animationFrameId = requestAnimationFrame(updateBallPosition);
+  };
 
-            return newScore;
-          });
-        }
+  animationFrameId = requestAnimationFrame(updateBallPosition);
 
-        // SI LA PELOTA TOCA EL FONDO SE PIERDE LA PARTIDA
-        if (newY + ballSize >= SCREEN_HEIGHT) {
-          setGameOver(true);
-        }
-
-        return {
-          ...prev,
-          x: newX,
-          y: newY,
-          dx: newDx,
-          dy: newDy,
-        };
-      });
-    }, 10);
-
-    return () => clearInterval(interval);
-  }, [gameOver]);
+  return () => cancelAnimationFrame(animationFrameId);
+}, [gameOver]);
 
   const resetGame = () => {
     setBall({
