@@ -13,36 +13,20 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 
-//********************************************************************************************
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
-//********************************************************************************************
-/*
-    "Dimensions.get" OBTIENE EL ANCHO Y EL ALTO DE LA PANTALLA DEL CELULAR Y GUARDA
-    ESOS VALORES EN LAS CONSTANTES "SCREEN_WIDTH" Y "SCREEN_HEIGHT"
-*/
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-/*
-    "PADDLE_WIDTH" DEFINE EL ANCHO DE LA PALETA EN 100px
-    "PADDLE_HEIGHT" DEFINE EL ALTO DE LA PALETA EN 20px
-    "BALL_SIZE" DEFINE EL DIAMETRO DE LA PELOTA EN 20px (ES UN CUADRADO QUE LUEGO SE REDONDEA)
-    "BALL_SPEED" DEFINE EL VALOR INICIAL DE VELOCIDAD (MAYOR VALOR MAS VELOCIDAD)
-*/
 const PADDLE_WIDTH = 150;
 const PADDLE_HEIGHT = 80;
 const BALL_SIZE = 75;
 const BALL_SPEED = 5;
 const BASE_SPEED = 5;
 
-//********************************************************************************************
-
-//********************************************************************************************
 // ACA SE DEFINE Y EXPORTA EL COMPONENTE PRINCIPAL DE LA PANTALLA DEL JUEGO
-//********************************************************************************************
 export default function GameScreen({ route }) {
   const { level } = route.params || { level: "tenis" };
   const navigation = useNavigation();
 
+  // ESTOS 2 SWITCH SE ENCARGAN DE CAMBIAR LA CANCHA Y PELOTA SEGUN LO SELECCIONADO
   const getBackgroundImage = () => {
     switch (level) {
       case "futbol":
@@ -64,28 +48,13 @@ export default function GameScreen({ route }) {
         return require("../../assets/tenisBall.png");
     }
   };
-  //---------------------------------------------------------------------------------------------
-  /*
-    "const [paddleX, setPaddleX] = useState((SCREEN_WIDTH - PADDLE_WIDTH) / 2)""
-    "(SCREEN_WIDTH - PADDLE_WIDTH) / 2": ESTO SETEA LA POSICION INICIAL EN HORIZONTAL
-    DE LA PALETA; EL "/2" CALCULA EL CENTRO DE LA PANTALLA
-    "setPaddleX": ESTO SE USA PARA MOVER LA PALETA CON EL DEDO
-*/
+
+  // ESTO SE USA PARA MOVER LA PALETA Y CENTRARLA A MITAD DEL DEDO
   const [paddleX, setPaddleX] = useState((SCREEN_WIDTH - PADDLE_WIDTH) / 2);
 
   const [ballSize, setBallSize] = useState(BALL_SIZE);
 
-  /*
-    "const [ball, setBall] = useState({ ... })": ESTE USESTATE DEFINE POSICION Y DIRECCION DE LA PELOTA
-    "x: SCREEN_WIDTH / 2 - BALL_SIZE / 2": DEFINE POSICION HORIZONTAL INICIAL EN CENTRO DE LA PANTALLA
-    "y: SCREEN_HEIGHT / 2": DEFINE POSICION VERTICAL EN CENTRO DE LA PANTALLA
-    "dx: BALL_SPEED": DEFINE VELOCIDAD HORIZONTAL (POSITIVO ES HACIA DERECHA)
-    "dy: -BALL_SPEED": DEFINE VELOCIDAD VERTICAL (NEGATIVO ES HACIA DERECHA)
-
-    "x" Y "y" SON LAS COORDENADAS DE LA PELOTA
-    "dx" Y "dy" REPRESENTAN LA DIRECCION Y VELOCIDAD DE MOVIMIENTO EN CADA EJE
-
-*/
+  // ACA SE DEFINE POSICION Y DIRECCION DE LA PELOTA (x, y, son posicion y dx y dy son direccion)
   const [ball, setBall] = useState({
     x: SCREEN_WIDTH / 2 - BALL_SIZE / 2,
     y: SCREEN_HEIGHT / 2,
@@ -93,51 +62,29 @@ export default function GameScreen({ route }) {
     dy: -BALL_SPEED,
   });
 
-  /*
-    "const [score, setScore] = useState(0)": CONTADOR DE PUNTOS, COMIENZA EN CERO
-    "setScore": SE USARA PARA AUMENTAR EL VALOR CUANDO LA PELOTA TOQUE LA PALETA
-*/
+  // CONTADOR DE PUNTOS Y ACTUALIZADOR DE PUNTOS
   const [score, setScore] = useState(0);
 
-  /*
-    "const [gameOver, setGameOver] = useState(false)": BOOLEANO PARA SABER SI EL JUGADOR PERDIO
-    CUANDO LA PELOTA TOCA EL FONDO DE LA PANTALLA; SI ES TRUE EL JUEGO SE DETIENE    
-*/
+  // CUANDO LA PELOTA TOCA EL FONDO gameOver PARA A true
   const [gameOver, setGameOver] = useState(false);
 
-  /*
-    "const ballRef = useRef(ball)": SE GUARDA LA ULTIMA POSICION DE LA PELOTA
-*/
+  // GUARDA LA ULTIMA POSICION DE LA PELOTA
   const ballRef = useRef(ball);
 
-  /*
-    "const paddleRef = useRef(paddleX)": SE GUARDA LA ULTIMA POSICION DE LA PALETA
-*/
+  // GUARDA LA ULTIMA POSICION DE LA PALETA
   const paddleRef = useRef(paddleX);
 
-  /*
-    "useEffect(() => { ... }, [ball])": SE EJECUTA CUANDO CAMBIA EL ESTADO DE LA PELOTA (ball)
-    "ballRef.current = ball": ACTUALIZA EL "ref" CON EL NUEVO VALOR DEL ESTADO PELOTA (ball)
-
-    ESTE BLOQUE ACTUALIZA EL ESTADO DE LA PELOTA PARA QUE OTRAS PARTES DEL CODIGO PUEDAN SABER
-    SU ULTIMA POSICION
-*/
+  // SE ACTUALIZA EL ESTADO DE LA PELOTA PARA OTRAS PARTES DEL JUEGO PUEDAN SABER SU POSICION
   useEffect(() => {
     ballRef.current = ball;
   }, [ball]);
 
-  /*
-    "useEffect(() => { ... }, [paddleX])": SE EJECUTA CUANDO CAMBIA EL ESTADO DE LA PALETA (paddleX)
-    "paddleRef.current = paddleX": ACTUALIZA EL "ref" CON EL NUEVO VALOR DEL ESTADO PALETA (paddleX)
-
-    ESTE BLOQUE ACTUALIZA EL ESTADO DE LA PALETA PARA QUE OTRAS PARTES DEL CODIGO PUEDAN SABER
-    SU ULTIMA POSICION
-*/
+  // SE ACTUALIZA EL ESTADO DE LA PALETA PARA OTRAS PARTES DEL JUEGO PUEDAN SABER SU POSICION
   useEffect(() => {
     paddleRef.current = paddleX;
   }, [paddleX]);
 
-  /* >>>>>>>>>>>>>>>>>>EXPLICAR ESTE USEEFECT DE VELOCIDAD<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+  // LOGICA DE AUMENTO DE VELOCIDAD DE LA PELOTA
   useEffect(() => {
     const speedMultiplier = 1 + Math.floor(score / 5) * 0.5; // AUMENTA 50% CADA 5 GOLPES
 
@@ -153,26 +100,7 @@ export default function GameScreen({ route }) {
     });
   }, [score]);
 
-  //********************************************************************************************
-  // ACA ESTA LA LOGICA PARA MOVER LA PALETA CON EL DEDO
-  //********************************************************************************************
-
-  /*
-    "panResponder": ES UNA HERRAMIENTA DE REACT NATIVE PARA MANEJAR GESTOS TACTILES
-    "PanResponder.create": CREA UNA LISTA DE GESTOS QUE DETECTA SI EL JUGADOR TOCO LA PANTALLA 
-    "onStartShouldSetPanResponder: () => true": DEVUELVE SIEMPRE "true" PARA PODER REACCIONAR A CUALQUIER TOQUE
-    DE LA PANTALLA
-    "onPanResponderMove: (_, gestureState) => { ... }": SE EJECUTA CADA VEZ QUE EL DEDO SE MUEVE POR LA PANTALLA
-    "let newX = gestureState.moveX - PADDLE_WIDTH / 2": ESTO INDICA LA POSICION HORIZONTAL DEL DEDO, Y ESTA DIVIDO
-    POR 2 PARA QUE SE CENTRE LA PALETA RESPECTO DEL DEDO (SINO LA PALETA APARECERIA DESPLAZADA)
-    "newX = Math.max(0, Math.min(SCREEN_WIDTH - PADDLE_WIDTH, newX))": ESTA PARTE EVITA QUE LA PELTA SALGA DE LA PANTALLA;
-    EL "Math.max..." EVITA QUE PASE DEL BORDE IZQUIERDO Y EL "Math.min..." EVITA QUE PASE DEL BORDE DERECHO
-    "setPaddleX(newX)": ESTO MUEVE LA PALETA Y ACTUALIZA SU ESTADO CON LA NUEVA POSICION
-    "useRef(...).current": ESTA TODO DENTRO DE UN "useRef" PARA EVITAR QUE LA CONST "panResponder" SE VUELVA A CREAR
-    EN CADA RENDERIZACION
-
-
-*/
+  // LOGICA DE MOVIMIENTO DE LA PALETA CON EL DEDO USANDO panResponder
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -184,25 +112,9 @@ export default function GameScreen({ route }) {
     })
   ).current;
 
-  //********************************************************************************************
-  // ACA ESTA LA LOGICA DEL MOVIMIENTO DE LA PELOTA (REBOTES, COLISION CON PALETA Y FIN DEL JUEGO)
-  //********************************************************************************************
-
-  /*
-  "useEffect(() => { ... }, [gameOver])": SE ACTIVA AL COMENZAR EL JUEGO O CUANDO CAMBIA EL VALOR DE "gameOver"
-  "if (gameOver) return": NO EJECUTA NADA, SIGNIFICA QUE SE PERDIO Y LA PELOTA NO SE MUEVE MAS
-*/
+  // SE EJECUTA AL COMENZAR EL JUEGO O AL PERDER
   useEffect(() => {
     if (gameOver) return;
-
-    /*
-  "const interval = setInterval(() => {...} , 10)": SIMULA LOS FPS DEL JUEGO, A MAYOR VALOR MENOS FPS (SE VE MAS LENTO)
-  "let newX = prev.x + prev.dx;
-   let newY = prev.y + prev.dy;
-   let newDx = prev.dx;
-   let newDy = prev.dy;": HACE EL MOVIMIENTO DE LA PELOTA; "x" Y "y" ES LA POSICION NUEVA, "dx" Y "dy" ES LA VELOCIDAD
-   HORIZONTAL Y VERTICAL DE LA PELOTA
-*/
 
     const interval = setInterval(() => {
       setBall((prev) => {
@@ -211,35 +123,21 @@ export default function GameScreen({ route }) {
         let newDx = prev.dx;
         let newDy = prev.dy;
 
-        /*
-            "if (newX <= 0 || newX + BALL_SIZE >= SCREEN_WIDTH) {...}": AL TOCAR LOS BORDES LATERALES INVIERTE LA DIRECCION
-            HACIA DONDE SE MUEVE LA PELOTA
-        */
+        // ESTO INVIERTE EL MOVIMIENTO DE LA PELOTA SEGUN EL REBOTE CONTRA LAS PAREDES LATERALES
         if (newX <= 0 || newX + ballSize >= SCREEN_WIDTH) {
           newDx = -newDx;
         }
 
-        /*
-            "if (newY <= 0) {...}": AL TOCAR EL TECHO O BORDE SUPERIOR, REBOTA HACIA ABAJO
-        */
+        // ESTO DETECTA LA COLISION CONTRA EL TECHO Y LA DEVUELVE HACIA ABAJO
         if (newY <= 0) {
           newDy = -newDy;
         }
 
-        /*
-            "const paddleTop": INDICA LA POSICION VERTICAL EN QUE LA PELOTA REBOTA CON LA PALETA
-            "const isBallAbovePaddle": INDICA SI LA PELOTA ESTA TOCANDO LA PARTE SUPERIOR DE LA PALETA
-            "const isBallWithinPaddle": INDICA SI LA PELOTA ESTA DENTRO DEL ANCHO DE LA PALETA
-            "if (isBallAbovePaddle && isBallWithinPaddle && newDy > 0) {
-            newDy = -newDy;
-            setScore((s) => s + 1);
-            }": SI "newDy > 0" SIGNIFICA QUE LA PELOTA ESTABA BAJANDO, ENTONCES "newDy = -newDy" HACE
-            REBOTAR LA PELOTA Y "setScore((s) => s + 1)" SUMA UN PUNTO
-        */
+        // ESTO ES LA COLISION DE LA PELOTA CON LA PALETA
         const PADDLE_BOTTOM_OFFSET = 150;
-        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET;
-        const isBallAbovePaddle = newY + ballSize == paddleTop;
-        const isBallWithinPaddle =
+        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET; // POSICION VERTICAL DE COLISION CON LA PALETA
+        const isBallAbovePaddle = newY + ballSize == paddleTop; //INDICA SI LA PELOTA ESTA TOCANDO LA PARTE SUPERIOR DE LA PALETA
+        const isBallWithinPaddle = //INDICA SI LA PELOTA ESTA DENTRO DEL ANCHO DE LA PALETA
           newX + ballSize >= paddleRef.current &&
           newX <= paddleRef.current + PADDLE_WIDTH;
 
@@ -266,16 +164,11 @@ export default function GameScreen({ route }) {
           });
         }
 
-        /* 
-            "if (newY + BALL_SIZE >= SCREEN_HEIGHT) {...}": SI LA PELOTA TOCA EL FONDO SIN TOCAR LA PALETA ENTONCES SE PIERDE
-        */
+        // SI LA PELOTA TOCA EL FONDO SE PIERDE LA PARTIDA
         if (newY + ballSize >= SCREEN_HEIGHT) {
           setGameOver(true);
         }
 
-        /*
-            "return {...prev, ...}": DEVUELVE LA NUEVA POSICION Y DIRECCION DE LA PELOTA"
-        */
         return {
           ...prev,
           x: newX,
@@ -286,9 +179,6 @@ export default function GameScreen({ route }) {
       });
     }, 10);
 
-    /*
-        "return () => clearInterval(interval)": LIMPIA EL "setInterval"
-    */
     return () => clearInterval(interval);
   }, [gameOver]);
 
