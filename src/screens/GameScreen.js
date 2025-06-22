@@ -23,12 +23,13 @@ const BASE_SPEED = 5;
 
 // ACA SE DEFINE Y EXPORTA EL COMPONENTE PRINCIPAL DE LA PANTALLA DEL JUEGO
 export default function GameScreen({ route }) {
-  const { level } = route.params || { level: "tenis" };
+ const { mode } = route.params || { mode: "tenis" };
+
   const navigation = useNavigation();
 
   // ESTOS 2 SWITCH SE ENCARGAN DE CAMBIAR LA CANCHA Y PELOTA SEGUN LO SELECCIONADO
   const getBackgroundImage = () => {
-    switch (level) {
+    switch (mode) {
       case "futbol":
         return require("../../assets/canchaFutbol.png");
       case "basquet":
@@ -39,7 +40,7 @@ export default function GameScreen({ route }) {
   };
 
   const getBallImage = () => {
-    switch (level) {
+    switch (mode) {
       case "futbol":
         return require("../../assets/futbolBall.png");
       case "basquet":
