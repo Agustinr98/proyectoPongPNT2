@@ -6,19 +6,38 @@ import RegistroLoginScreen from "./src/screens/RegistroLoginScreen";
 import LeaderBoard from "./src/screens/LeaderBoard";
 import LoginScreen from "./src/screens/LoginForm";
 import GameScreen from './src/screens/GameScreen';
+import { AuthProvider, useAuth } from './Hooks/useAuth';
 
 const Stack = createNativeStackNavigator();
 
+function AppNavigator() {
+  const { auth } = useAuth();
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      {!auth ? (
+        <Stack.Screen
+          name="RegistroLoginScreen"
+          component={RegistroLoginScreen}
+          options={{ headerShown: false }}
+        />
+      ) : (
+        <>
+          <Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Ranking" component={LeaderBoard} />
+          <Stack.Screen name="Game" component={GameScreen} options={{ headerShown: false }} />
+        </>
+      )}
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="RegistroLoginScreen">
-        <Stack.Screen name="RegistroLoginScreen" component={RegistroLoginScreen} options={{ headerTitle: "Proyecto PONG" }} />
-        <Stack.Screen name="Inicio" component={HomeScreen} />
-        <Stack.Screen name="Ranking" component={LeaderBoard} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Game" component={GameScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

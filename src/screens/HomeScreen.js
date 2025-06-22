@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { useAuth } from '../../Hooks/useAuth';
 
 export default function HomeScreen({ navigation }) {
+  const { logout } = useAuth();
+
   return (
     <View style={styles.container}>
       <View style={styles.canchaButtons}>
@@ -22,9 +25,8 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <View style={styles.menuButtons}>
-        <Button title="INICIO" onPress={() => {}} />
         <Button title="RANKING" onPress={() => navigation.navigate('Ranking')} />
-        <Button title="CERRAR SESIÓN" onPress={() => navigation.navigate('Login')} />
+        <Button title="CERRAR SESIÓN" onPress={logout} />
       </View>
     </View>
   );
