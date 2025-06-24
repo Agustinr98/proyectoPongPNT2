@@ -24,7 +24,7 @@ function AppNavigator() {
       ) : (
         <>
           <Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Ranking" component={LeaderBoard} />
+          <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
           <Stack.Screen name="Game" component={GameScreen} options={{ headerShown: false }} />
         </>
       )}

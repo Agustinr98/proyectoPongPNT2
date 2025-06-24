@@ -6,6 +6,7 @@ import {
   PanResponder,
   Text,
   Image,
+  Vibration,
   ImageBackground,
   TouchableOpacity,
   StatusBar
@@ -15,10 +16,10 @@ import { useNavigation } from "@react-navigation/native";
 
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const PADDLE_WIDTH = 150;
-const PADDLE_HEIGHT = 80;
-const BALL_SIZE = 75;
-const BALL_SPEED = 5;
+const PADDLE_WIDTH = 150; //ANCHO PALETA
+const PADDLE_HEIGHT = 80; //ALTO PALETA
+const BALL_SIZE = 75; // TAMAÑO PELOTA
+const BALL_SPEED = 5; // VELOCIDAD PELOTA
 const BASE_SPEED = 5;
 
 // ACA SE DEFINE Y EXPORTA EL COMPONENTE PRINCIPAL DE LA PANTALLA DEL JUEGO
@@ -66,7 +67,7 @@ export default function GameScreen({ route }) {
   // CONTADOR DE PUNTOS Y ACTUALIZADOR DE PUNTOS
   const [score, setScore] = useState(0);
 
-  // CUANDO LA PELOTA TOCA EL FONDO gameOver PARA A true
+  // CUANDO LA PELOTA TOCA EL FONDO gameOver PASA A true
   const [gameOver, setGameOver] = useState(false);
 
   // GUARDA LA ULTIMA POSICION DE LA PELOTA
@@ -157,6 +158,8 @@ export default function GameScreen({ route }) {
       // Pérdida
       if (newY + ballSize >= SCREEN_HEIGHT) {
         setGameOver(true);
+        Vibration.vibrate(500)
+
       }
 
       return {

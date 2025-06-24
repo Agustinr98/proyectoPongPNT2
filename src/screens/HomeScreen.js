@@ -47,15 +47,17 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
 
-        {/* Continuar Juego */}
+          
+        {/* (Continuar Juego)
         <TouchableOpacity style={styles.primaryButton} onPress={() => goToGame('tenis')}>
           <Text style={styles.buttonText}>Continuar juego</Text>
         </TouchableOpacity>
 
-        {/* Juego nuevo */}
+        (Continuar Juego)
         <TouchableOpacity style={styles.secondaryButton} onPress={() => goToGame('tenis')}>
           <Text style={styles.secondaryText}>Juego nuevo</Text>
         </TouchableOpacity>
+        */}
 
         {/* Ranking */}
         <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('LeaderBoard')}>
