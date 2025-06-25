@@ -7,7 +7,7 @@ import LeaderBoard from "./src/screens/LeaderBoard";
 import GameScreen from './src/screens/GameScreen';
 import { AuthProvider, useAuth } from './Hooks/useAuth';
 import LoginForm from './src/screens/LoginForm';
-
+import EditUserScreen from './src/screens/EditUserScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +26,7 @@ function AppNavigator() {
           <Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />
           <Stack.Screen name="LeaderBoard" component={LeaderBoard} />
           <Stack.Screen name="Game" component={GameScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="EditarUsuario" component={EditUserScreen} />
         </>
       )}
     </Stack.Navigator>

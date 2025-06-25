@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Button, } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '../../Hooks/useAuth'; 
 
@@ -67,6 +67,11 @@ export default function HomeScreen({ navigation }) {
         <TouchableOpacity style={[styles.secondaryButton, { marginBottom: 20 }]} onPress={logout}>
           <Text style={styles.secondaryText}>Cerrar sesión</Text>
         </TouchableOpacity>
+
+    <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('EditarUsuario')}>
+          <Text style={styles.secondaryText}>Editar/Eliminar Usuario</Text>
+        </TouchableOpacity>
+
       </ScrollView>
     </View>
   );
