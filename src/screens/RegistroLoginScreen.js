@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../Hooks/useAuth";
 
+
 export default function RegistroLoginScreen() {
   const navigation = useNavigation();
   const { login } = useAuth();
@@ -73,7 +74,8 @@ export default function RegistroLoginScreen() {
 
       <Button title="Iniciar Sesión" onPress={handleLogin} />
 
-      <Text style={styles.minitext}>¿Olvidó su contraseña?</Text>
+      <Button title="¿No tiene cuenta? Regístrese" onPress={() => navigation.navigate('Login')} />
+
     </KeyboardAvoidingView>
   );
 }
@@ -86,6 +88,12 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#fff",
   },
+  link: {
+  color: '#3578E5',
+  fontWeight: 'bold',
+  marginTop: 20,
+  textAlign: 'center'
+},
   title: {
     fontSize: 32,
     fontWeight: "bold",

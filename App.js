@@ -4,9 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from "./src/screens/HomeScreen";
 import RegistroLoginScreen from "./src/screens/RegistroLoginScreen";
 import LeaderBoard from "./src/screens/LeaderBoard";
-import LoginScreen from "./src/screens/LoginForm";
 import GameScreen from './src/screens/GameScreen';
 import { AuthProvider, useAuth } from './Hooks/useAuth';
+import LoginForm from './src/screens/LoginForm';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -16,11 +17,10 @@ function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       {!auth ? (
-        <Stack.Screen
-          name="RegistroLoginScreen"
-          component={RegistroLoginScreen}
-          options={{ headerShown: false }}
-        />
+        <>
+          <Stack.Screen name="RegistroLoginScreen" component={RegistroLoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={LoginForm} />
+        </>
       ) : (
         <>
           <Stack.Screen name="Inicio" component={HomeScreen} options={{ headerShown: false }} />

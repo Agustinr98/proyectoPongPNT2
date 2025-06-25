@@ -1,88 +1,106 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
+  Button,
   StyleSheet,
-} from "react-native";
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const LoginForm = () => {
+export default function LoginForm() {
+  const navigation = useNavigation();
+
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleCrearUsuario = () => {
+    if (!username || !email || !password) {
+      Alert.alert('Error', 'Por favor completá todos los campos.');
+      return;
+    }
+
+    Alert.alert('Usuario creado', 'El usuario fue creado correctamente.', [
+      {
+        text: 'OK',
+        onPress: () => navigation.navigate('RegistroLoginScreen'),
+      },
+    ]);
+  };
+
   return (
-    <View style={styles.wrapper}>
-      <Text style={styles.title}>Login</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={80}
+    >
+      <ScrollView contentContainerStyle={styles.form}>
+        <Text style={styles.title}>Crear Usuario</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Usuario"
-        autoCapitalize="none"
-        required
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Usuario"
+          value={username}
+          onChangeText={setUsername}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
-        required
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <TouchableOpacity>
-        <Text style={styles.link}>¿Olvidó su contraseña?</Text>
-      </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Iniciar Sesión</Text>
-      </TouchableOpacity>
-
-      <View style={styles.register}>
-        <Text>No tiene cuenta?</Text>
-        <TouchableOpacity>
-          <Text style={styles.link}>Regístrese</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        <View style={styles.buttons}>
+          <Button title="Cancelar" onPress={() => navigation.goBack()} />
+          <Button title="Crear Usuario" onPress={handleCrearUsuario} />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  wrapper: {
+  container: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: '#fff',
+  },
+  form: {
     padding: 20,
-    backgroundColor: "#fff",
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 24,
     marginBottom: 30,
-    textAlign: "center",
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   input: {
+    height: 50,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginBottom: 15,
-    borderRadius: 5,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
-  button: {
-    backgroundColor: "#0066cc",
-    padding: 15,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  link: {
-    color: "#0066cc",
-    marginTop: 10,
-  },
-  register: {
-    marginTop: 20,
-    alignItems: "center",
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
   },
 });
 
-export default LoginForm;
+
