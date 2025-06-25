@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../../Hooks/useAuth'; 
 
 export default function HomeScreen({ navigation }) {
   const [highScore, setHighScore] = useState(0);
+    const { logout } = useAuth();
 
   const cards = [
     { image: require('../../assets/canchaBasquet.png'), label: 'Basquet Pong', mode: 'basquet' },
@@ -64,9 +66,9 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.secondaryText}>Ranking</Text>
         </TouchableOpacity>
 
-        {/* Inicio */}
-        <TouchableOpacity style={[styles.secondaryButton, { marginBottom: 20 }]} onPress={() => navigation.navigate('LoginForm')}>
-          <Text style={styles.secondaryText}>Inicio</Text>
+           {/* Cerrar sesión */}
+        <TouchableOpacity style={[styles.secondaryButton, { marginBottom: 20 }]} onPress={logout}>
+          <Text style={styles.secondaryText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
