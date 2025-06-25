@@ -35,10 +35,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.title}>PONG</Text>
-
-        <Text style={styles.scoreTitle}>Mejor puntuación de todos los tiempos</Text>
-        <Text style={styles.score}>🏆 {highScore}</Text>
+      <Text style={[styles.title, { marginBottom: 50 }]}>PONG</Text>  
 
         <View style={styles.cardContainer}>
           {cards.map((card, index) => (
@@ -78,8 +75,8 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F4F6FB' },
   scroll: { alignItems: 'center', paddingVertical: 30 },
-  title: { fontSize: 40, fontWeight: 'bold', color: '#1A2A3A' },
-  scoreTitle: { fontSize: 16, color: '#6D7D8B', marginTop: 10 },
+  title: { fontSize: 40, fontWeight: 'bold', color: '#1A2A3A' , marginTop: 30},
+  scoreTitle: { fontSize: 16, color: '#6D7D8B', marginTop: 20 },
   score: { fontSize: 30, fontWeight: 'bold', color: '#1A2A3A', marginVertical: 10 },
   cardContainer: {
     flexDirection: 'row',

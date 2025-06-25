@@ -19,12 +19,13 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  //se fija que completen todos los campos antes de crear el usuario
   const handleCrearUsuario = () => {
     if (!username || !email || !password) {
       Alert.alert('Error', 'Por favor completá todos los campos.');
       return;
     }
-
+//avisa que el usuario fue creado correctamente y navega a la pantalla de login
     Alert.alert('Usuario creado', 'El usuario fue creado correctamente.', [
       {
         text: 'OK',
@@ -36,6 +37,7 @@ export default function LoginForm() {
   return (
     <KeyboardAvoidingView
       style={styles.container}
+      //ajusta el teclado para que no tape los campos de entrada
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={80}
     >
