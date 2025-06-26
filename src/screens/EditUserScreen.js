@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../Hooks/useAuth';
+import { actualizarContraseña, eliminarUsuario } from '../../Hooks/storage.js';
 
 export default function EditUserScreen() {
   const navigation = useNavigation();
@@ -9,55 +10,58 @@ export default function EditUserScreen() {
   const [actualPassword, setActualPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const handleUpdatePassword = () => {
-    if (!actualPassword || !newPassword) {
-      Alert.alert('Error', 'Todos los campos son obligatorios');
-      return;
-    }
+  // CAMBIAR CONTRASEÑA
+ const handleUpdatePassword = async () => {
+  if (!actualPassword || !newPassword) {
+    Alert.alert("Error", "Todos los campos son obligatorios");
+    return;
+  }
 
-    // Validar que la contraseña actual ingresada coincida con la guardada
-    if (actualPassword !== auth?.password) {
-      Alert.alert('Error', 'La contraseña actual no es correcta');
-      return;
-    }
+  if (actualPassword !== auth?.password) {
+    Alert.alert("Error", "La contraseña actual no es correcta");
+    return;
+  }
 
-    // FUTURO: hacer fetch al backend para actualizar la contraseña
+  try {
+    await actualizarContraseña(auth.username, newPassword);
 
-    // Por ahora solo mostrar mensaje y cerrar sesión
-    Alert.alert('Contraseña actualizada', 'Por seguridad, volvé a iniciar sesión.', [
+    Alert.alert("Contraseña actualizada", "Por seguridad, volvé a iniciar sesión.", [
       {
-        text: 'OK',
+        text: "OK",
         onPress: () => {
           logout();
-          navigation.navigate('RegistroLoginScreen');
-        }
-      }
+          navigation.navigate("RegistroLoginScreen");
+        },
+      },
     ]);
+  } catch (error) {
+    Alert.alert("Error", error.message);
+  }
+};
 
-    // Limpiar campos
-    setActualPassword('');
-    setNewPassword('');
-  };
-
-  const handleDeleteUser = () => {
-    Alert.alert(
-      'Confirmar eliminación',
-      '¿Estás seguro que deseas eliminar tu usuario?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: () => {
-            // FUTURO: hacer fetch al backend para eliminar el usuario
-
+// BORRAR USUARIO
+const handleDeleteUser = () => {
+  Alert.alert(
+    'Confirmar eliminación',
+    '¿Estás seguro que deseas eliminar tu usuario?',
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await eliminarUsuario(auth.username);
             logout();
             navigation.navigate('RegistroLoginScreen');
+          } catch (error) {
+            Alert.alert('Error', error.message);
           }
-        }
-      ]
-    );
-  };
+        },
+      },
+    ]
+  );
+};
 
   return (
     <View style={styles.container}>

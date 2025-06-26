@@ -9,28 +9,54 @@ import {
   StyleSheet,
 } from "react-native";
 import { useAuth } from "../../Hooks/useAuth";
-
+import { obtenerUsuarios, guardarUsuarios } from "../../Hooks/storage.js";
 
 export default function RegistroLoginScreen() {
   const navigation = useNavigation();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  navigation.addListener('focus', () => {
-    setEmail('');
-    setUsername('');
-    setPassword('');
+  navigation.addListener("focus", () => {
+    setEmail("");
+    setUsername("");
+    setPassword("");
   });
 
-  const usuarios = [
-    { username: 'admin', email: 'admin@admin.admin', password: '123' },
-    { username: 'PedroPalotes', email: 'pedro@pepepe.com', password: '123' },
-    { username: 'MonicaMusical', email: 'monica@cine.com', password: '123' },
-    { username: 'VictorBelico', email: 'victor@guerra.com', password: '123' },
-  ];
+  // MODIFIQUE ESTO ----------------------
+  const [usuarios, setUsuarios] = useState([]);
+
+useEffect(() => {
+  const cargarUsuarios = async () => {
+    let data = await obtenerUsuarios();
+
+    if (data.length === 0) {
+      // SI NO HAY USUARIOS INICIA CON ESTA LISTA POR DEFECTO
+      data = [
+        { username: "admin", email: "admin@admin.admin", password: "123" },
+        { username: "PedroPalotes", email: "pedro@pepepe.com", password: "123" },
+        { username: "MonicaMusical", email: "monica@cine.com", password: "123" },
+        { username: "VictorBelico", email: "victor@guerra.com", password: "123" },
+        { username: "LauraLuz", email: "laura@brillo.com", password: "123" },
+        { username: "CarlosCanto", email: "carlos@musica.com", password: "123" },
+        { username: "NinaNube", email: "nina@cielo.com", password: "123" },
+        { username: "OscarOceano", email: "oscar@marino.com", password: "123" },
+        { username: "BrunoBosque", email: "bruno@selva.com", password: "123" },
+        { username: "SilviaSolar", email: "silvia@astro.com", password: "123" },
+        { username: "TomasTren", email: "tomas@viaje.com", password: "123" },
+        { username: "EvaEstrella", email: "eva@espacio.com", password: "123" },
+      ];
+
+      await guardarUsuarios(data); // ACA SE GUARDAN LOS USUARIOS EN ASYNCSTORAGE
+    }
+
+    setUsuarios(data);
+  };
+
+  cargarUsuarios();
+}, []); // HASTA ACA ------------------
 
   const handleLogin = () => {
     try {
@@ -74,12 +100,13 @@ export default function RegistroLoginScreen() {
 
       <Button title="Iniciar Sesión" onPress={handleLogin} />
 
-      <Button title="¿No tiene cuenta? Regístrese" onPress={() => navigation.navigate('Login')} />
-
+      <Button
+        title="¿No tiene cuenta? Regístrese"
+        onPress={() => navigation.navigate("Login")}
+      />
     </KeyboardAvoidingView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -89,11 +116,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   link: {
-  color: '#3578E5',
-  fontWeight: 'bold',
-  marginTop: 20,
-  textAlign: 'center'
-},
+    color: "#3578E5",
+    fontWeight: "bold",
+    marginTop: 20,
+    textAlign: "center",
+  },
   title: {
     fontSize: 32,
     fontWeight: "bold",
@@ -115,4 +142,4 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: "center",
   },
-}); 
+});

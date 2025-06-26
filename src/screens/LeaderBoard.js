@@ -9,16 +9,16 @@ export default function LeaderBoard() {
 
   useEffect(() => {
     const top10 = [
-      { nombre: 'Juan', apellido: 'Pérez', puntos: 150 },
-      { nombre: 'Ana', apellido: 'García', puntos: 130 },
-      { nombre: 'Luis', apellido: 'Martínez', puntos: 110 },
-      { nombre: 'Lucía', apellido: 'Fernández', puntos: 100 },
-      { nombre: 'Carlos', apellido: 'Gómez', puntos: 95 },
-      { nombre: 'Laura', apellido: 'Ruiz', puntos: 90 },
-      { nombre: 'Pedro', apellido: 'Lopez', puntos: 85 },
-      { nombre: 'María', apellido: 'Sosa', puntos: 82 },
-      { nombre: 'Nico', apellido: 'Farias', puntos: 80 },
-      { nombre: 'Elena', apellido: 'Mendez', puntos: 78 },
+      { nombre: 'PedroPalotes', puntos: 150 },
+      { nombre: 'MonicaMusical',puntos: 130 },
+      { nombre: 'VictorBelico', puntos: 110 },
+      { nombre: 'LauraLuz', puntos: 100 },
+      { nombre: 'CarlosCanto', puntos: 95 },
+      { nombre: 'NinaNube', puntos: 90 },
+      { nombre: 'OscarOceano', puntos: 85 },
+      { nombre: 'BrunoBosque', puntos: 82 },
+      { nombre: 'SilviaSolar', puntos: 80 },
+      { nombre: 'TomasTren', puntos: 78 },
     ];
     setUsuarios(top10);
   }, []);
