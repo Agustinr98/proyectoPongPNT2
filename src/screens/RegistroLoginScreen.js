@@ -74,7 +74,7 @@ useEffect(() => {
         throw new Error("La contraseña o el usuario son incorrectos");
       }
     } catch (error) {
-      console.error("Error durante el inicio de sesión: ", error);
+      //console.error("Error durante el inicio de sesión: ", error);
       Alert.alert("Error", "No se pudo iniciar sesión: " + error.message);
     }
   };

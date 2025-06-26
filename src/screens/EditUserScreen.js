@@ -30,7 +30,6 @@ export default function EditUserScreen() {
         text: "OK",
         onPress: () => {
           logout();
-          navigation.navigate("RegistroLoginScreen");
         },
       },
     ]);
@@ -53,7 +52,6 @@ const handleDeleteUser = () => {
           try {
             await eliminarUsuario(auth.username);
             logout();
-            navigation.navigate('RegistroLoginScreen');
           } catch (error) {
             Alert.alert('Error', error.message);
           }

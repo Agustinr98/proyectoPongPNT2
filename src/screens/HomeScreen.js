@@ -41,7 +41,7 @@ export default function HomeScreen({ navigation }) {
         setHighScore(parseInt(score));
       }
     } catch (e) {
-      console.error("Error al cargar el puntaje máximo:", e);
+      //console.error("Error al cargar el puntaje máximo:", e);
     }
   };
 
