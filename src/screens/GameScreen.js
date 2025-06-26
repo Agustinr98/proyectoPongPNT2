@@ -9,7 +9,7 @@ import {
   Vibration,
   ImageBackground,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -26,14 +26,12 @@ const BASE_SPEED = 5;
 
 // ACA SE DEFINE Y EXPORTA EL COMPONENTE PRINCIPAL DE LA PANTALLA DEL JUEGO
 export default function GameScreen({ route }) {
- const { mode } = route.params || { mode: "tenis" };
+  const { mode } = route.params || { mode: "tenis" };
 
   const navigation = useNavigation();
 
-  const { auth } = useAuth(); 
+  const { auth } = useAuth();
 
-  
-  
   // ESTOS 2 SWITCH SE ENCARGAN DE CAMBIAR LA CANCHA Y PELOTA SEGUN LO SELECCIONADO
   const getBackgroundImage = () => {
     switch (mode) {
@@ -72,7 +70,7 @@ export default function GameScreen({ route }) {
 
   // CONTADOR DE PUNTOS Y ACTUALIZADOR DE PUNTOS
   const [score, setScore] = useState(0);
-const scoreRef = useRef(score); // REFERENCIA PARA EL SCORE
+  const scoreRef = useRef(score); // REFERENCIA PARA EL SCORE
 
   // CUANDO LA PELOTA TOCA EL FONDO gameOver PASA A true
   const [gameOver, setGameOver] = useState(false);
@@ -94,9 +92,9 @@ const scoreRef = useRef(score); // REFERENCIA PARA EL SCORE
   }, [paddleX]);
 
   // ACTUALIZA LA REFERENCIA DEL SCORE SIEMPRE QUE CAMBIA
-useEffect(() => {
-  scoreRef.current = score;
-}, [score]);
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
 
   // LOGICA DE AUMENTO DE VELOCIDAD DE LA PELOTA
   useEffect(() => {
@@ -128,82 +126,82 @@ useEffect(() => {
 
   // SE EJECUTA AL COMENZAR EL JUEGO O AL PERDER
   useEffect(() => {
-  if (gameOver) return;
+    if (gameOver) return;
 
-  let animationFrameId;
+    let animationFrameId;
 
-  const updateBallPosition = () => {
-    setBall((prev) => {
-      let newX = prev.x + prev.dx;
-      let newY = prev.y + prev.dy;
-      let newDx = prev.dx;
-      let newDy = prev.dy;
+    const updateBallPosition = () => {
+      setBall((prev) => {
+        let newX = prev.x + prev.dx;
+        let newY = prev.y + prev.dy;
+        let newDx = prev.dx;
+        let newDy = prev.dy;
 
-      // Rebote contra las paredes
-      if (newX <= 0 || newX + ballSize >= SCREEN_WIDTH) {
-        newDx = -newDx;
-      }
+        // REBOTE CONTRA LAS PAREDES
+        if (newX <= 0 || newX + ballSize >= SCREEN_WIDTH) {
+          newDx = -newDx;
+        }
 
-      if (newY <= 0) {
-        newDy = -newDy;
-      }
+        if (newY <= 0) {
+          newDy = -newDy;
+        }
 
-      // Colisión con paleta
-      const PADDLE_BOTTOM_OFFSET = 150;
-      const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET;
-      const isBallCollidingVertically =
-        newY + ballSize >= paddleTop &&
-        newY + ballSize <= paddleTop + PADDLE_HEIGHT;
-      const isBallWithinPaddle =
-        newX + ballSize >= paddleRef.current &&
-        newX <= paddleRef.current + PADDLE_WIDTH;
+        // COLISION CON LA PALETA
+        const PADDLE_BOTTOM_OFFSET = 150;
+        const paddleTop = SCREEN_HEIGHT - PADDLE_HEIGHT - PADDLE_BOTTOM_OFFSET;
+        const isBallCollidingVertically =
+          newY + ballSize >= paddleTop &&
+          newY + ballSize <= paddleTop + PADDLE_HEIGHT;
+        const isBallWithinPaddle =
+          newX + ballSize >= paddleRef.current &&
+          newX <= paddleRef.current + PADDLE_WIDTH;
 
-      if (isBallCollidingVertically && isBallWithinPaddle && newDy > 0) {
-        newDy = -newDy;
+        if (isBallCollidingVertically && isBallWithinPaddle && newDy > 0) {
+          newDy = -newDy;
 
-        setScore((s) => {
-          const newScore = s + 1;
-          return newScore;
-        });
-      }
+          setScore((s) => {
+            const newScore = s + 1;
+            return newScore;
+          });
+        }
 
-      // Pérdida
-      if (newY + ballSize >= SCREEN_HEIGHT) {
-  setGameOver(true);
-  Vibration.vibrate(500);
+        // LOGICA CUANDO SE PIERDE LA PARTIDA
+        if (newY + ballSize >= SCREEN_HEIGHT) {
+          setGameOver(true);
+          Vibration.vibrate(500);
 
-  if (newY + ballSize >= SCREEN_HEIGHT) {
-  setGameOver(true);
-  Vibration.vibrate(500);
+          if (newY + ballSize >= SCREEN_HEIGHT) {
+            setGameOver(true);
+            Vibration.vibrate(500);
 
-  if (auth?.username) {
-    const key = `highScore_${auth.username}`;
-    AsyncStorage.getItem(key).then((storedScore) => {
-      const previousHigh = parseInt(storedScore) || 0;
-      if (scoreRef.current > previousHigh) {
-        AsyncStorage.setItem(key, scoreRef.current.toString());
-      }
-    });
-  }
-}
-}
+            if (auth?.username) {
+              const key = `highScore_${auth.username}`;
+              AsyncStorage.getItem(key).then((storedScore) => {
+                const previousHigh = parseInt(storedScore) || 0;
+                if (scoreRef.current > previousHigh) {
+                  AsyncStorage.setItem(key, scoreRef.current.toString());
+                }
+              });
+            }
+          }
+        }
 
-      return {
-        ...prev,
-        x: newX,
-        y: newY,
-        dx: newDx,
-        dy: newDy,
-      };
-    });
+        return {
+          ...prev,
+          x: newX,
+          y: newY,
+          dx: newDx,
+          dy: newDy,
+        };
+      });
+
+      animationFrameId = requestAnimationFrame(updateBallPosition);
+    };
 
     animationFrameId = requestAnimationFrame(updateBallPosition);
-  };
 
-  animationFrameId = requestAnimationFrame(updateBallPosition);
-
-  return () => cancelAnimationFrame(animationFrameId);
-}, [gameOver]);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [gameOver]);
 
   const resetGame = () => {
     setBall({
@@ -228,19 +226,22 @@ useEffect(() => {
       >
         <Text style={styles.score}>{score}</Text>
         {gameOver && (
-  <>
-    <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
-      <Text style={styles.restartText}>Reiniciar</Text>
-    </TouchableOpacity>
+          <>
+            <TouchableOpacity style={styles.restartButton} onPress={resetGame}>
+              <Text style={styles.restartText}>Reiniciar</Text>
+            </TouchableOpacity>
 
-    <TouchableOpacity
-      style={[styles.restartButton, { backgroundColor: "#2196F3", marginTop: 10 }]}
-      onPress={() => navigation.navigate("Inicio")}
-    >
-      <Text style={styles.restartText}>Volver al Inicio</Text>
-    </TouchableOpacity>
-  </>
-)}
+            <TouchableOpacity
+              style={[
+                styles.restartButton,
+                { backgroundColor: "#2196F3", marginTop: 10 },
+              ]}
+              onPress={() => navigation.navigate("Inicio")}
+            >
+              <Text style={styles.restartText}>Volver al Inicio</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
         <Image
           source={getBallImage()}
@@ -255,7 +256,7 @@ useEffect(() => {
 
         <Image
           source={require("../../assets/paddle.png")}
-           style={{
+          style={{
             position: "absolute",
             width: PADDLE_WIDTH,
             height: PADDLE_HEIGHT,
@@ -263,7 +264,6 @@ useEffect(() => {
             left: paddleX,
           }}
         />
-
       </ImageBackground>
     </SafeAreaView>
   );
@@ -273,7 +273,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
-    
   },
   score: {
     color: "black",
