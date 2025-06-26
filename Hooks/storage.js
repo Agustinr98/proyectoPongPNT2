@@ -7,7 +7,7 @@ export const guardarUsuarios = async (usuarios) => {
   try {
     await AsyncStorage.setItem(USUARIOS_KEY, JSON.stringify(usuarios));
   } catch (e) {
-    console.error('Error al guardar usuarios:', e);
+    //console.error('Error al guardar usuarios:', e);
   }
 };
 
@@ -17,7 +17,7 @@ export const obtenerUsuarios = async () => {
     const data = await AsyncStorage.getItem(USUARIOS_KEY);
     return data ? JSON.parse(data) : [];
   } catch (e) {
-    console.error('Error al leer usuarios:', e);
+    //console.error('Error al leer usuarios:', e);
     return [];
   }
 };
@@ -37,7 +37,7 @@ export const agregarUsuario = async (nuevoUsuario) => {
   const usuarioConPuntaje = { ...nuevoUsuario, highScore: 0 };
 
   usuarios.push(usuarioConPuntaje);
-  console.log(usuarioConPuntaje);
+  //console.log(usuarioConPuntaje);
   await guardarUsuarios(usuarios);
 };
 

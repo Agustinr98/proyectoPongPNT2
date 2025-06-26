@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../../Hooks/useAuth.js";
 
 // DEFINICION DE LAS DIMENSIONES DE LA PANTALLA Y TAMAÑO DE LOS OBJETOS DEL JUEGO
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -28,6 +30,10 @@ export default function GameScreen({ route }) {
 
   const navigation = useNavigation();
 
+  const { auth } = useAuth(); 
+
+  
+  
   // ESTOS 2 SWITCH SE ENCARGAN DE CAMBIAR LA CANCHA Y PELOTA SEGUN LO SELECCIONADO
   const getBackgroundImage = () => {
     switch (mode) {
@@ -66,6 +72,7 @@ export default function GameScreen({ route }) {
 
   // CONTADOR DE PUNTOS Y ACTUALIZADOR DE PUNTOS
   const [score, setScore] = useState(0);
+const scoreRef = useRef(score); // REFERENCIA PARA EL SCORE
 
   // CUANDO LA PELOTA TOCA EL FONDO gameOver PASA A true
   const [gameOver, setGameOver] = useState(false);
@@ -85,6 +92,11 @@ export default function GameScreen({ route }) {
   useEffect(() => {
     paddleRef.current = paddleX;
   }, [paddleX]);
+
+  // ACTUALIZA LA REFERENCIA DEL SCORE SIEMPRE QUE CAMBIA
+useEffect(() => {
+  scoreRef.current = score;
+}, [score]);
 
   // LOGICA DE AUMENTO DE VELOCIDAD DE LA PELOTA
   useEffect(() => {
@@ -157,10 +169,24 @@ export default function GameScreen({ route }) {
 
       // Pérdida
       if (newY + ballSize >= SCREEN_HEIGHT) {
-        setGameOver(true);
-        Vibration.vibrate(500)
+  setGameOver(true);
+  Vibration.vibrate(500);
 
+  if (newY + ballSize >= SCREEN_HEIGHT) {
+  setGameOver(true);
+  Vibration.vibrate(500);
+
+  if (auth?.username) {
+    const key = `highScore_${auth.username}`;
+    AsyncStorage.getItem(key).then((storedScore) => {
+      const previousHigh = parseInt(storedScore) || 0;
+      if (scoreRef.current > previousHigh) {
+        AsyncStorage.setItem(key, scoreRef.current.toString());
       }
+    });
+  }
+}
+}
 
       return {
         ...prev,

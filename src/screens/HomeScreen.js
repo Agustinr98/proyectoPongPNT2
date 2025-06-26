@@ -14,7 +14,9 @@ import Location from "../components/Location.js";
 
 export default function HomeScreen({ navigation }) {
   const [highScore, setHighScore] = useState(0);
-  const { logout } = useAuth();
+  const { logout , auth } = useAuth();
+
+  
 
   const cards = [
     {
@@ -35,19 +37,32 @@ export default function HomeScreen({ navigation }) {
   ];
 
   const loadHighScore = async () => {
-    try {
-      const score = await AsyncStorage.getItem("highScore");
-      if (score !== null) {
-        setHighScore(parseInt(score));
-      }
-    } catch (e) {
-      //console.error("Error al cargar el puntaje máximo:", e);
+  if (!auth?.username) return;
+
+  try {
+    const key = `highScore_${auth.username}`;
+    const score = await AsyncStorage.getItem(key);
+    if (score !== null) {
+      setHighScore(parseInt(score));
+    } else {
+      setHighScore(0);
     }
-  };
+  } catch (e) {
+    //console.error("Error al cargar el puntaje máximo:", e);
+  }
+};
 
   useEffect(() => {
     loadHighScore();
-  }, []);
+  }, [auth]);
+
+  useEffect(() => {
+  const unsubscribe = navigation.addListener("focus", () => {
+    loadHighScore();
+  });
+
+  return unsubscribe;
+}, [navigation, auth]);
 
   const goToGame = (mode) => {
     navigation.navigate("Game", { mode });
@@ -57,6 +72,7 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={[styles.title, { marginBottom: 50 }]}>PONG</Text>
+        <Text style={[styles.scoreTitle]}>Puntaje más alto: {highScore}</Text>
 
         <View style={styles.cardContainer}>
           {cards.map((card, index) => (
