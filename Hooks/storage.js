@@ -33,7 +33,11 @@ export const agregarUsuario = async (nuevoUsuario) => {
     throw new Error('El usuario o email ya está registrado');
   }
 
-  usuarios.push(nuevoUsuario);
+  // SE INICIA CON PUNTAJE INICIAL EN 0
+  const usuarioConPuntaje = { ...nuevoUsuario, highScore: 0 };
+
+  usuarios.push(usuarioConPuntaje);
+  console.log(usuarioConPuntaje);
   await guardarUsuarios(usuarios);
 };
 
@@ -64,3 +68,5 @@ export const eliminarUsuario = async (username) => {
 
   await guardarUsuarios(nuevosUsuarios);
 };
+
+

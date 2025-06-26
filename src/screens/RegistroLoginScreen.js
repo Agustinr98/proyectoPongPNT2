@@ -69,7 +69,7 @@ useEffect(() => {
       );
 
       if (usuarioEncontrado) {
-        login(usuarioEncontrado); // guarda sesión y navega
+        login(usuarioEncontrado); 
       } else {
         throw new Error("La contraseña o el usuario son incorrectos");
       }
