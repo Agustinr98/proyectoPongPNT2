@@ -1,12 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useState, useEffect } from "react";
-
-import * as Location from "expo-location";
+import * as Location from "expo-location"; // MODULO DE EXPO PARA ACCEDER A UBICACION DEL DISPOSITIVO
 
 export default function Ubicacion() {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [ubicacionInfo, setUbicacionInfo] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null); // GUARDA MENSAJE DE ERROR
+  const [ubicacionInfo, setUbicacionInfo] = useState(null); // GUARDA DATOS EN FORMATO TEXTO DE PROVINCIA Y PAIS
 
   useEffect(() => {
     async function getCurrentLocation() {
@@ -19,8 +17,6 @@ export default function Ubicacion() {
 
       // OBTENCION DE COORDENADAS
       let location = await Location.getCurrentPositionAsync({});
-      //console.log("location", location);
-      setLocation(location);
 
       // ACA MUESTRA PROVINCIA Y PAIS SEGUN LAS COORDENADAS
       let geocode = await Location.reverseGeocodeAsync({
@@ -30,8 +26,6 @@ export default function Ubicacion() {
 
       if (geocode.length > 0) {
         let info = geocode[0];
-        //console.log("Provincia:", info.region);
-        //console.log("País:", info.country);
         setUbicacionInfo(info);
       }
     }
@@ -56,13 +50,15 @@ export default function Ubicacion() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    paddingVertical: 10,
+    minHeight: 50,
+    maxHeight: 80,
   },
   textoUb: {
     fontSize: 16,
     textAlign: "center",
-    color: "#3578E5"
+    color: "#3578E5",
   },
 });

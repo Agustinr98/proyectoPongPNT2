@@ -1,3 +1,4 @@
+//ESTO NO SE LLEGO A IMPLEMENTAR
 import React from 'react';
 import { ScrollView } from 'react-native';
 import UserItem from './UserItem';

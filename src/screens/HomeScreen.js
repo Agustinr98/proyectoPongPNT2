@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Button,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../../Hooks/useAuth";
@@ -14,10 +13,9 @@ import Location from "../components/Location.js";
 
 export default function HomeScreen({ navigation }) {
   const [highScore, setHighScore] = useState(0);
-  const { logout , auth } = useAuth();
+  const { logout, auth } = useAuth();
 
-  
-
+  //CADA TARJETA LLEVA A SU RESPECTIVA CANCHA Y PELOTA
   const cards = [
     {
       image: require("../../assets/canchaBasquet.png"),
@@ -36,34 +34,35 @@ export default function HomeScreen({ navigation }) {
     },
   ];
 
+  //SE CARGA EL PUNTAJE MAS ALTO DEL USUARIO LOGUEADO DESDE EL ASYNCSTORAGE
   const loadHighScore = async () => {
-  if (!auth?.username) return;
+    if (!auth?.username) return;
 
-  try {
-    const key = `highScore_${auth.username}`;
-    const score = await AsyncStorage.getItem(key);
-    if (score !== null) {
-      setHighScore(parseInt(score));
-    } else {
-      setHighScore(0);
-    }
-  } catch (e) {
-    //console.error("Error al cargar el puntaje máximo:", e);
-  }
-};
+    try {
+      const key = `highScore_${auth.username}`;
+      const score = await AsyncStorage.getItem(key);
+      if (score !== null) {
+        setHighScore(parseInt(score));
+      } else {
+        setHighScore(0);
+      }
+    } catch (e) {}
+  };
 
   useEffect(() => {
+    //CARGA EL PUNTAJE AL INICIAR EL JUEGO Y AL SALIR DEL JUEGO EN SI
     loadHighScore();
   }, [auth]);
 
   useEffect(() => {
-  const unsubscribe = navigation.addListener("focus", () => {
-    loadHighScore();
-  });
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadHighScore();
+    });
 
-  return unsubscribe;
-}, [navigation, auth]);
+    return unsubscribe;
+  }, [navigation, auth]);
 
+  //ACA SE PASA EL MODO DE JUEGO ELEGIDO SEGUN LA TARJETA DE ARRIBA
   const goToGame = (mode) => {
     navigation.navigate("Game", { mode });
   };
@@ -72,7 +71,7 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={[styles.title, { marginBottom: 50 }]}>PONG</Text>
-        <Text style={[styles.scoreTitle]}>Puntaje más alto: {highScore}</Text>
+        <Text style={[styles.scoreTitle]}>Puntaje más alto 🏆 {highScore}</Text>
 
         <View style={styles.cardContainer}>
           {cards.map((card, index) => (
@@ -91,17 +90,6 @@ export default function HomeScreen({ navigation }) {
           ))}
         </View>
 
-        {/* (Continuar Juego)
-        <TouchableOpacity style={styles.primaryButton} onPress={() => goToGame('tenis')}>
-          <Text style={styles.buttonText}>Continuar juego</Text>
-        </TouchableOpacity>
-
-        (Continuar Juego)
-        <TouchableOpacity style={styles.secondaryButton} onPress={() => goToGame('tenis')}>
-          <Text style={styles.secondaryText}>Juego nuevo</Text>
-        </TouchableOpacity>
-        */}
-
         {/* Ranking */}
         <TouchableOpacity
           style={styles.secondaryButton}
@@ -118,6 +106,7 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.secondaryText}>Cerrar sesión</Text>
         </TouchableOpacity>
 
+        {/* Editar usuario */}
         <TouchableOpacity
           style={styles.secondaryButton}
           onPress={() => navigation.navigate("EditarUsuario")}
@@ -136,7 +125,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F4F6FB" },
   scroll: { alignItems: "center", paddingVertical: 30 },
   title: { fontSize: 40, fontWeight: "bold", color: "#1A2A3A", marginTop: 30 },
-  scoreTitle: { fontSize: 16, color: "#6D7D8B", marginTop: 20 },
+  scoreTitle: {
+    fontSize: 30,
+    color: "#1A2A3A",
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 50,
+  },
   score: {
     fontSize: 30,
     fontWeight: "bold",
@@ -192,9 +187,12 @@ const styles = StyleSheet.create({
     borderColor: "#3578E5",
     borderWidth: 2,
     marginBottom: 15,
+    alignSelf: "center",
   },
   secondaryText: {
     color: "#3578E5",
     fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

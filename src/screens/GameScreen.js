@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
   StyleSheet,
   Dimensions,
   PanResponder,
@@ -9,7 +8,6 @@ import {
   Vibration,
   ImageBackground,
   TouchableOpacity,
-  StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -32,7 +30,7 @@ export default function GameScreen({ route }) {
 
   const { auth } = useAuth();
 
-  // ESTOS 2 SWITCH SE ENCARGAN DE CAMBIAR LA CANCHA Y PELOTA SEGUN LO SELECCIONADO
+  // ESTOS 2 SWITCH SE ENCARGAN DE CAMBIAR LA CANCHA Y PELOTA SEGUN LO SELECCIONADO EN EL HOMESCREEN
   const getBackgroundImage = () => {
     switch (mode) {
       case "futbol":

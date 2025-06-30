@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { agregarUsuario } from "../../Hooks/storage";
@@ -16,6 +17,7 @@ import { agregarUsuario } from "../../Hooks/storage";
 export default function LoginForm() {
   const navigation = useNavigation();
 
+  //PARA GUARDAR VALORES CORRESPONDIENTES
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,13 +29,19 @@ export default function LoginForm() {
       return;
     }
 
-    // AGREGUE ESTO
+    //VERIFICA QUE EL EMAIL TENGA TEXTO ANTES DE @, UN @, TEXTO Y PUNTO, Y TEXTO LUEGO DEL PUNTO
+    const emailValidator = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailValidator.test(email)) {
+      Alert.alert("Error", "Por favor ingresá un email válido.");
+      return;
+    }
+
     try {
       await agregarUsuario({ username, email, password });
       Alert.alert("Usuario creado", "El usuario fue creado correctamente.", [
         {
           text: "OK",
-          onPress: () => navigation.navigate("RegistroLoginScreen"),
+          onPress: () => navigation.navigate("RegistroLoginScreen"), //VUELVE A PANTALLA DE REGISTRO-LOGIN
         },
       ]);
     } catch (error) {
@@ -75,8 +83,16 @@ export default function LoginForm() {
         />
 
         <View style={styles.buttons}>
-          <Button title="Cancelar" onPress={() => navigation.goBack()} />
-          <Button title="Crear Usuario" onPress={handleCrearUsuario} />
+          <TouchableOpacity
+            style={[styles.button, styles.buttonCancel]}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.buttonText}>Cancelar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.button} onPress={handleCrearUsuario}>
+            <Text style={styles.buttonText}>Crear Usuario</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -86,29 +102,48 @@ export default function LoginForm() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f4f4f4",
   },
   form: {
     padding: 20,
     justifyContent: "center",
   },
   title: {
-    fontSize: 24,
-    marginBottom: 30,
+    fontSize: 32,
+    marginBottom: 40,
     textAlign: "center",
     fontWeight: "bold",
+    color: "#333",
   },
   input: {
     height: 50,
-    borderColor: "#ccc",
+    backgroundColor: "#fff",
+    borderColor: "#ddd",
     borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
+    borderRadius: 10,
+    paddingHorizontal: 15,
     marginBottom: 20,
+    fontSize: 16,
   },
   buttons: {
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 10,
+    marginTop: 10,
+  },
+  button: {
+    flex: 1,
+    backgroundColor: "#007bff",
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  buttonCancel: {
+    backgroundColor: "#aaa",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
