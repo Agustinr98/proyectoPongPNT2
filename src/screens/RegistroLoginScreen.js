@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useAuth } from "../../Hooks/useAuth";
-import { obtenerUsuarios, guardarUsuarios } from "../../Hooks/storage.js";
+import { obtenerUsuarios, guardarUsuarios } from "../../Hooks/storage";
 
 export default function RegistroLoginScreen() {
   const navigation = useNavigation();
